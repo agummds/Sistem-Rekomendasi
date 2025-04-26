@@ -331,7 +331,15 @@ genres + platforms
 
 df['combined_features'] = df['genres'] + ' ' + df['platforms']
 
-"""## b. Inisialisasi TF-IDF"""
+"""Membuat fitur baru combined_features dengan menggabungkan genres dan platforms menggunakan spasi (' ').
+
+*Tujuannya:*
+- Membuat representasi tekstual yang lebih kaya untuk model Content-Based Filtering.
+
+## b. Inisialisasi TF-IDF
+
+Inisialisasi TfidfVectorizer dengan stop_words='english' untuk menghapus kata-kata umum yang tidak bermakna penting.
+"""
 
 tfidf = TfidfVectorizer(stop_words='english')
 
@@ -341,31 +349,10 @@ tfidf_matrix = tfidf.fit_transform(df['combined_features'])
 
 print(tfidf.get_feature_names_out())
 
-# Buat index nama ke index baris
-indices = pd.Series(df.index, index=df['name']).drop_duplicates()
+"""**Hasilnya:**
+- Membentuk matriks TF-IDF yang merepresentasikan kemiripan konten antar game berdasarkan teks.
 
-def recommend_games(title, cosine_sim=cosine_sim, df=df, top_n=5):
-    # Dapatkan index dari game
-    idx = indices[title]
-
-    # Ambil skor kemiripan
-    sim_scores = list(enumerate(cosine_sim[idx]))
-
-    # Urutkan berdasarkan kemiripan
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-    # Ambil top N rekomendasi (kecuali dirinya sendiri)
-    sim_scores = sim_scores[1:top_n+1]
-
-    # Ambil index game rekomendasi
-    game_indices = [i[0] for i in sim_scores]
-
-    # Tampilkan
-    return df[['name', 'genres', 'platforms']].iloc[game_indices]
-
-recommend_games("God of War")
-
-""" ## Pembuatan Fungsi Berdasarkan Nama Game
+## Pembuatan Fungsi Berdasarkan Nama Game
  - Fungsi Content-Based Filtering berdasarkan judul game, dan yang dikembalikan adalah daftar game yang mirip
 """
 
@@ -406,20 +393,13 @@ def recommend_games(title, cosine_sim=cosine_sim, df=df, top_n=5):
 
 recommend_games("Yaris", top_n=5)
 
-"""## Fungsi Top-N Game Mirip"""
+"""## Fungsi Top-N Game Mirip
+
+Fungsi top_n_recommendations bertujuan untuk mengidentifikasi dan mengembalikan DataFrame yang berisi top_n game teratas yang menunjukkan skor kemiripan rata-rata tertinggi jika dibandingkan dengan game lain dalam dataset. Fungsi ini mencapai tujuannya dengan terlebih dahulu menghitung rata-rata cosine similarity untuk setiap game terhadap semua game lain menggunakan np.mean(cosine_sim, axis=1). Kemudian, ia membuat DataFrame baru result_df dengan nama game, genre, platform, dan rata-rata kemiripan yang dihitung. Terakhir, ia mengurutkan DataFrame ini dalam urutan menurun berdasarkan rata-rata kemiripan dan mengembalikan top_n entri teratas, memberikan wawasan tentang game yang memiliki fitur paling umum dan dengan demikian dianggap sangat mirip dengan yang lain dalam dataset.
+"""
 
 def top_n_recommendations(cosine_sim, df, top_n=10):
-    """
-    Menampilkan Top-N game yang memiliki skor kemiripan rata-rata tertinggi dengan game lain.
 
-    Args:
-        cosine_sim (array): Matriks kemiripan antar game (cosine similarity)
-        df (DataFrame): Data game
-        top_n (int): Jumlah game teratas yang ingin ditampilkan
-
-    Returns:
-        DataFrame: Game dengan rata-rata similarity tertinggi
-    """
     # Hitung rata-rata similarity tiap game ke semua game lain
     avg_sim = np.mean(cosine_sim, axis=1)
 
@@ -431,8 +411,6 @@ def top_n_recommendations(cosine_sim, df, top_n=10):
     result_df = result_df.sort_values(by='avg_similarity', ascending=False)
 
     return result_df.head(top_n).reset_index(drop=True)
-
-top_n_recommendations(cosine_sim, df, top_n=10)
 
 """# Matrik  Evaluasi"""
 
@@ -462,4 +440,32 @@ Ini bisa mengindikasikan bahwa beberapa game sangat unik, atau fitur mereka tida
 - Perlu Threshold untuk Rekomendasi:
 
 Karena banyak nilai similarity mendekati 0, penting untuk menetapkan threshold minimal (misalnya 0.2 atau 0.3) agar rekomendasi yang diberikan benar-benar relevan dan tidak asal mirip.
+"""
+
+top_n_recommendations(cosine_sim, df, top_n=10)
+
+"""### 📊 Insight dari Top-N Rekomendasi
+
+Berikut adalah beberapa insight yang diperoleh dari hasil Top-10 rekomendasi yang dihasilkan oleh sistem:
+
+## 1. Genre Konsisten
+- Semua game yang direkomendasikan memiliki genre utama **Action Adventure**.
+- Hal ini menunjukkan bahwa sistem mampu memahami dan memprioritaskan genre sebagai salah satu faktor utama dalam rekomendasi.
+
+## 2. Platform yang Relevan
+- Game yang direkomendasikan sebagian besar tersedia di platform populer seperti **PlayStation 4**, **PC**, **Xbox One**, dan **Nintendo Switch**.
+- Ini memastikan bahwa pengguna mendapatkan rekomendasi game yang kompatibel dengan perangkat yang mereka gunakan.
+
+## 3. Nilai Similarity yang Tinggi
+- Rata-rata nilai similarity berkisar antara **0.248** hingga **0.253**, yang termasuk tinggi dalam skala cosine similarity.
+- Menunjukkan bahwa rekomendasi yang dihasilkan sangat relevan berdasarkan kombinasi fitur teks.
+
+## 4. Variasi dalam Kesamaan
+- Walaupun semua game berada dalam genre yang sama, judul-judul yang direkomendasikan tetap menawarkan variasi dari segi cerita, tema, dan gameplay.
+- Ini memberikan pengguna lebih banyak pilihan tanpa mengorbankan relevansi.
+
+## 5. Potensi Pengembangan Sistem
+- Sistem saat ini hanya mengandalkan `genres` dan `platforms`.
+- Untuk meningkatkan akurasi di masa depan, fitur tambahan seperti **developer**, **mode permainan** (singleplayer/multiplayer), atau **rating pengguna** dapat dipertimbangkan.
+
 """

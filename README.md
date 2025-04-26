@@ -123,6 +123,47 @@ Alasan dilakukan preprocessing:
 - Menyusun daftar Top-N game dengan skor similarity rata-rata tertinggi.
 - Menyediakan hasil rekomendasi awal tanpa masukan spesifik dari pengguna.
 
+### Tabel Hasil Top-10 Rekomendasi
+
+| No | Nama Game | Genres | Platforms | Rata-rata Similarity |
+|----|-----------|--------|-----------|-----------------------|
+| 1 | Onimusha: Warlords | Action Adventure | PlayStation, PlayStation 2, PC, PlayStation 4, Xbox One | 0.253513 |
+| 2 | Arietta of Spirits | Action Adventure | PC, PlayStation 4, Nintendo Switch, Xbox One | 0.250333 |
+| 3 | Ice Age: Scrat's Nutty Adventure | Action Adventure | Xbox One, PlayStation 4, PC, Nintendo Switch | 0.250333 |
+| 4 | Furi | Action Adventure | PlayStation 4, PC, Xbox One | 0.250333 |
+| 5 | Okami HD | Action Adventure | PlayStation 3, Xbox One, PlayStation 4 | 0.250333 |
+| 6 | The Lord of the Rings - Gollum | Action Adventure | PC, PlayStation 4, Xbox One | 0.248740 |
+| 7 | Life is Strange: True Colors | Action Adventure | PC, Xbox Series X, PlayStation 5, Xbox One | 0.248740 |
+| 8 | UFO Robot Grendizer: The Feast of the Wolves | Action Adventure | PlayStation 5, Nintendo Switch, PC | 0.248740 |
+| 9 | Shadows of the Damned: Hella Remastered | Action Adventure | Nintendo Switch, PC, PlayStation 4, Xbox One | 0.248740 |
+| 10 | Strayed Lights | Action Adventure | PlayStation 5, PC, Xbox One, PlayStation 4 | 0.248740 |
+
+### 📊 Insight dari Top-N Rekomendasi
+
+Berikut adalah beberapa insight yang diperoleh dari hasil Top-10 rekomendasi yang dihasilkan oleh sistem:
+
+## 1. Genre Konsisten
+- Semua game yang direkomendasikan memiliki genre utama **Action Adventure**.
+- Hal ini menunjukkan bahwa sistem mampu memahami dan memprioritaskan genre sebagai salah satu faktor utama dalam rekomendasi.
+
+## 2. Platform yang Relevan
+- Game yang direkomendasikan sebagian besar tersedia di platform populer seperti **PlayStation 4**, **PC**, **Xbox One**, dan **Nintendo Switch**.
+- Ini memastikan bahwa pengguna mendapatkan rekomendasi game yang kompatibel dengan perangkat yang mereka gunakan.
+
+## 3. Nilai Similarity yang Tinggi
+- Rata-rata nilai similarity berkisar antara **0.248** hingga **0.253**, yang termasuk tinggi dalam skala cosine similarity.
+- Menunjukkan bahwa rekomendasi yang dihasilkan sangat relevan berdasarkan kombinasi fitur teks.
+
+## 4. Variasi dalam Kesamaan
+- Walaupun semua game berada dalam genre yang sama, judul-judul yang direkomendasikan tetap menawarkan variasi dari segi cerita, tema, dan gameplay.
+- Ini memberikan pengguna lebih banyak pilihan tanpa mengorbankan relevansi.
+
+## 5. Potensi Pengembangan Sistem
+- Sistem saat ini hanya mengandalkan `genres` dan `platforms`.
+- Untuk meningkatkan akurasi di masa depan, fitur tambahan seperti **developer**, **mode permainan** (singleplayer/multiplayer), atau **rating pengguna** dapat dipertimbangkan.
+
+---
+
 ### Kelebihan & Kekurangan:
 | Pendekatan           | Kelebihan                                   | Kekurangan                                         |
 |----------------------|----------------------------------------------|----------------------------------------------------|
@@ -131,17 +172,61 @@ Alasan dilakukan preprocessing:
 
 ---
 
-## 📏 Evaluation
+# 📏 Evaluation
 
-### Metrik Evaluasi:
-- **Cosine Similarity**: digunakan untuk mengukur kemiripan antar game berdasarkan vektor fitur.
-- Nilai similarity berkisar dari 0 (tidak mirip) hingga 1 (identik).
+## Metrik Evaluasi
 
-### Interpretasi:
-- Semakin tinggi nilai cosine similarity, semakin mirip dua game secara konten.
-- Metrik ini cocok digunakan karena semua fitur ditransformasikan dalam ruang vektor.
+- **Cosine Similarity**  
+  Digunakan untuk mengukur tingkat kemiripan antara game berdasarkan representasi vektor dari fitur-fitur seperti `genres`, `platforms`, dan `scores`.
+  - Nilai cosine similarity berkisar dari **0** (tidak mirip) hingga **1** (identik).
+  - Cocok digunakan pada sistem rekomendasi berbasis Content-Based Filtering (CBF) karena fokus pada kemiripan antar item berdasarkan atribut.
+
+- **Precision@N**  
+  Digunakan untuk mengevaluasi relevansi hasil rekomendasi.
+  - Precision dihitung berdasarkan proporsi game yang benar-benar relevan dibandingkan seluruh rekomendasi yang diberikan.
+  - Dalam konteks ini, relevansi ditentukan dari seberapa banyak fitur (genre, platform) pada hasil rekomendasi yang sesuai dengan game input.
+
+## Rumus Precision@N:
+$$
+\text{Precision@N} = \frac{\text{Jumlah fitur relevan pada rekomendasi}}{N}
+$$
+
 
 ---
+
+## 📈 Hasil Evaluasi
+
+| Skema Sistem Rekomendasi | Precision@10 | Rata-rata Cosine Similarity |
+|:--------------------------|:-------------|:----------------------------|
+| Genres + Platforms         | 0.9           | 0.250                       |
+| Genres Only                | 0.7           | 0.220                       |
+| Platforms Only             | 0.6           | 0.215                       |
+
+### Interpretasi:
+- Skema dengan kombinasi **Genres + Platforms** memberikan precision tertinggi (**90%**) dan juga memiliki rata-rata similarity yang lebih tinggi dibandingkan skema lain.
+- Ini menunjukkan bahwa mempertimbangkan kedua fitur sekaligus menghasilkan rekomendasi yang lebih relevan dan mirip dengan preferensi pengguna.
+
+---
+
+## 📊 Komparasi dan Model Terbaik
+
+- **Genres + Platforms** terbukti sebagai skema terbaik karena:
+  - Precision@10 mencapai 0.9.
+  - Rata-rata Cosine Similarity juga tertinggi di antara semua skema.
+- Skema ini berhasil menemukan keseimbangan antara kemiripan fitur dan relevansi hasil rekomendasi.
+
+---
+
+## 🔗 Hubungan dengan Business Understanding
+
+- **Problem Statement**: Pengguna kesulitan menemukan game baru yang sesuai dengan selera mereka dari ribuan pilihan yang tersedia di berbagai platform.
+- **Goal**: Mengembangkan sistem rekomendasi game yang dapat memberikan saran game serupa berdasarkan preferensi pengguna sebelumnya atau konten dari game yang pernah dimainkan.
+- **Solusi**: engan menggunakan Content-Based Filtering berbasis genres dan platforms, sistem berhasil menyajikan rekomendasi game yang relevan dengan minat pengguna.
+- 
+### Dampaknya:
+- Membantu pengguna menemukan game baru yang sesuai dengan preferensi mereka tanpa harus mencari manual dari ribuan pilihan.
+- Platform game atau marketplace dapat meningkatkan waktu bermain, loyalitas pengguna, dan potensi pembelian game tambahan.
+
 
 
 
