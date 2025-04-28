@@ -14,13 +14,73 @@ Proyek ini bertujuan membangun sistem rekomendasi game berbasis Content-Based Fi
 ## **Data Understanding**
 Project ini berdasarkan dan diambil dari dataset **Kaggle** dengan nama Metacritic Games 1995-2024 yang dapat diakses pada link berikut https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024
 
-Dataset berisi informasi tentang 13.398 game, dengan kolom penting seperti:
+Jumlah Baris dan Kolom
+Dataset Metacritic Games 1995-2024 terdiri dari:
 
-- name: Nama game
-- genres: Genre dari game (misalnya "Open-World Action", "3D Platformer")
-- platforms: Platform tempat game tersedia (misalnya "PlayStation 4", "PC", "Nintendo Switch")
-- metacritic_review_score dan user_review_score: Skor kualitas dari kritikus dan pengguna
-- must_play: Label yang menunjukkan game unggulan
+- Jumlah baris: 13.398 baris, di mana setiap baris mewakili satu game yang telah dirilis dan dinilai di Metacritic
+- Jumlah kolom: Dataset ini memiliki beberapa kolom utama yang menyediakan informasi tentang setiap game
+
+Jumlah ini mencerminkan cakupan yang luas dari game yang dirilis selama hampir tiga dekade (1995-2024), memberikan gambaran komprehensif tentang tren dan perubahan dalam industri game selama periode tersebut.
+
+# Data Understanding
+
+## Pengantar Pembahasan Informasi Data
+
+Data understanding adalah tahap krusial dalam analisis data di mana kita membangun pemahaman mendasar tentang dataset yang akan dianalisis. Untuk dataset Metacritic Games 1995-2024, proses ini mencakup mengenali sumber data, memahami struktur data, mengidentifikasi masalah kualitas data, dan memahami arti dari setiap fitur dalam dataset.
+
+## URL/Tautan Sumber Data
+
+Dataset ini bersumber dari platform Kaggle, yang merupakan komunitas data science dan machine learning terbesar di dunia. Dataset Metacritic Games 1995-2024 dapat diakses melalui tautan berikut:
+https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024
+
+Dataset ini merupakan kompilasi data game yang dikumpulkan dari situs Metacritic, yang merupakan agregator ulasan terkenal untuk media termasuk video game, film, acara TV, musik, dan lainnya. Metacritic khususnya terkenal dalam industri game karena sistem penilaiannya yang disebut "Metascore" yang mengagregasi ulasan dari berbagai kritikus profesional.
+
+## Jumlah Baris dan Kolom
+
+Dataset Metacritic Games 1995-2024 terdiri dari:
+- **Jumlah baris**: 13.398 baris, di mana setiap baris mewakili satu game yang telah dirilis dan dinilai di Metacritic
+- **Jumlah kolom**: Dataset ini memiliki beberapa kolom utama yang menyediakan informasi tentang setiap game
+
+Jumlah ini mencerminkan cakupan yang luas dari game yang dirilis selama hampir tiga dekade (1995-2024), memberikan gambaran komprehensif tentang tren dan perubahan dalam industri game selama periode tersebut.
+
+## Kondisi Data
+
+### Missing Values
+Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missing values), terutama pada kolom-kolom seperti:
+
+- `user_review_score`: Beberapa game mungkin tidak memiliki nilai ini jika belum mendapatkan cukup ulasan dari pengguna
+- `metacritic_review_score`: Game yang baru dirilis atau kurang populer mungkin belum memiliki skor dari kritikus profesional
+- `genres`: Beberapa game mungkin tidak memiliki kategorisasi genre yang jelas
+
+## Uraian Seluruh Fitur pada Data
+
+Berikut adalah uraian dari fitur-fitur utama dalam dataset Metacritic Games 1995-2024:
+
+1. **name**: Nama dari game
+   - Tipe data: String/Text
+   - Deskripsi: Judul resmi dari game yang dirilis
+
+2. **genres**: Genre dari game
+   - Tipe data: String/Tex
+   - Deskripsi: Kategori game seperti "Open-World Action", "3D Platformer", "RPG", dll.
+   - Nilai mungkin dipisahkan oleh koma atau format lain untuk game dengan multiple genre
+
+3. **platforms**: Platform tempat game tersedia
+   - Tipe data: String/Text
+   - Deskripsi: Platform gaming seperti "PlayStation 4", "PC", "Nintendo Switch", dll.
+   - Satu game bisa tersedia di beberapa platform
+
+4. **metacritic_review_score**: Skor dari kritikus profesional
+   - Tipe data: Numerik
+   - Deskripsi: Agregat skor dari berbagai reviewer profesional yang dikelola oleh Metacritic
+
+5. **user_review_score**: Skor dari pengguna biasa
+   - Tipe data: Numerik
+   - Deskripsi: Rata-rata skor yang diberikan oleh pengguna Metacritic
+
+6. **must_play**: Label untuk game unggulan
+   - Tipe data: Boolean atau kategorikal (Yes/No)
+   - Deskripsi: Penanda untuk game yang dianggap "must play" atau sangat direkomendasikan
 
 # **Import Library**
 """
@@ -36,7 +96,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 """## **Memuat Data**"""
 
-# Use the raw URL for the CSV file
 url = 'https://raw.githubusercontent.com/agummds/Sistem-Rekomendasi/master/Dataset/12_23_2024_detailed_data.csv'
 
 df = pd.read_csv(url)
@@ -64,7 +123,7 @@ print(f"Total data duplikat: {df.duplicated().sum()} duplikat")
 
 """Berdasarkan output kode, tidak ada data yang duplikat, berarti data aman
 
-# Preprocessing
+# Data Preprocessing
 """
 
 # Konversi skor ke numerik
@@ -323,6 +382,36 @@ df['combined_features'] = df['genres'] + ' ' + df['platforms']
 vectorizer = TfidfVectorizer()
 feature_matrix = vectorizer.fit_transform(df['combined_features'])
 
+"""## **b. Penaganan Missing Value**
+
+
+
+"""
+
+# 1. Periksa tipe data terlebih dahulu untuk memastikan konversi yang tepat
+print(df.dtypes)
+
+# Convert to numeric dengan hati-hati
+# Tampaknya kolom-kolom ini mungkin dalam format string atau memiliki karakter non-numerik
+df['metacritic_review_count'] = pd.to_numeric(df['metacritic_review_count'], errors='coerce')
+df['metacritic_review_score'] = pd.to_numeric(df['metacritic_review_score'], errors='coerce')
+df['user_review_count'] = pd.to_numeric(df['user_review_count'], errors='coerce')
+df['user_review_score'] = pd.to_numeric(df['user_review_score'], errors='coerce')
+
+# 2. Imputasi missing values
+# Untuk kolom review count, kita bisa menggantinya dengan 0 karena tidak adanya review adalah valid
+df['metacritic_review_count'].fillna(0, inplace=True)
+df['user_review_count'].fillna(0, inplace=True)
+
+# Untuk review score, kita bisa menggunakan median atau mean
+median_metacritic_score = df['metacritic_review_score'].median()
+median_user_score = df['user_review_score'].median()
+
+df['metacritic_review_score'].fillna(median_metacritic_score, inplace=True)
+df['user_review_score'].fillna(median_user_score, inplace=True)
+# 3. Verifikasi bahwa tidak ada lagi missing value
+print(df.isnull().sum())
+
 """# Membangun Sistem Rekomendasi Berbasis Konten (Content-Based Filtering)
 
 ## a.  Gabungkan Fitur Teks
@@ -357,6 +446,8 @@ print(tfidf.get_feature_names_out())
 """
 
 indices = pd.Series(df.index, index=df['name']).drop_duplicates()
+
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 def recommend_games(title, cosine_sim=cosine_sim, df=df, top_n=5):
     """
@@ -413,8 +504,6 @@ def top_n_recommendations(cosine_sim, df, top_n=10):
     return result_df.head(top_n).reset_index(drop=True)
 
 """# Matrik  Evaluasi"""
-
-cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 cosine_sim
 
