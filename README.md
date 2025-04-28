@@ -112,14 +112,17 @@ Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missin
 
 ## 🧹 Data Preparation
 
-Beberapa langkah yang dilakukan:
+### Penanganan missing value
+Karena ada beberapa bagian dari data yang mengalami missjng value maka dilakukan penanganan missjng value seperti pada umumnya. Metode yang digunakan adalah **imputasi** pada metacritic dan review count dan mengisinya dengan nilai 0.
+
+
+### Beberapa langkah yang dilakukan:
 - Menggunakan TF-IDF Vectorizer untuk mengonversi data teks (genre, platform, dll) menjadi representasi numerik.
 - Menormalisasi beberapa kolom numerik 
 
-Alasan dilakukan preprocessing:
 - TF-IDF dipilih karena mampu menangkap bobot penting kata pada fitur genre/platform.
 
-### Pendekatan 1: Content-Based Filtering
+### Pendekatan  Content-Based Filtering
 - Menggunakan TF-IDF untuk genre, platform, dan skor review.
 - Menghitung cosine similarity antar game.
 - Menyusun fungsi untuk merekomendasikan game berdasarkan input judul.
