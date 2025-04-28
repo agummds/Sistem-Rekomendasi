@@ -116,13 +116,17 @@ Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missin
 Karena ada beberapa bagian dari data yang mengalami missjng value maka dilakukan penanganan missjng value seperti pada umumnya. Metode yang digunakan adalah **imputasi** pada metacritic dan review count dan mengisinya dengan nilai 0.
 
 
-### Beberapa langkah yang dilakukan:
+### Penerapan Featuring Engineering:
+
+Mengubah data mentah menjadi fitur (fitur = representasi numerik/struktur) yang lebih baik untuk model machine learning. TF-IDF mengambil teks mentah dan mengubahnya menjadi representasi numerik berdasarkan pentingnya kata dalam dokumen dibandingkan dengan seluruh korpus — artinya, dia menciptakan fitur dari data teks.
+
 - Menggunakan TF-IDF Vectorizer untuk mengonversi data teks (genre, platform, dll) menjadi representasi numerik.
 - Menormalisasi beberapa kolom numerik 
 
 - TF-IDF dipilih karena mampu menangkap bobot penting kata pada fitur genre/platform.
 
-### Pendekatan  Content-Based Filtering
+### Membuat Pendekatan  Content-Based Filtering
+
 - Menggunakan TF-IDF untuk genre, platform, dan skor review.
 - Menghitung cosine similarity antar game.
 - Menyusun fungsi untuk merekomendasikan game berdasarkan input judul.
