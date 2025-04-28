@@ -48,6 +48,16 @@ Dataset terdiri dari 13.390 entri dan 12 kolom yang mencakup informasi game sepe
 
 Link sumber data: [Kaggle - Video Game Dataset](https://www.kaggle.com/datasets/sidtwr/videogame-dataset-metacritic)
 
+#### Kondisi Data
+
+#### Missing Values
+Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missing values), terutama pada kolom-kolom seperti:
+
+- `user_review_score`: Beberapa game mungkin tidak memiliki nilai ini jika belum mendapatkan cukup ulasan dari pengguna
+- `metacritic_review_score`: Game yang baru dirilis atau kurang populer mungkin belum memiliki skor dari kritikus profesional
+- `genres`: Beberapa ga
+
+
 ### Exploratory Data Analysis (EDA)
 #### **Distribusi Skor Review**
 
@@ -109,17 +119,21 @@ Beberapa langkah yang dilakukan:
 Alasan dilakukan preprocessing:
 - TF-IDF dipilih karena mampu menangkap bobot penting kata pada fitur genre/platform.
 
----
-
-## 🧠 Modeling and Result
-
 ### Pendekatan 1: Content-Based Filtering
 - Menggunakan TF-IDF untuk genre, platform, dan skor review.
 - Menghitung cosine similarity antar game.
 - Menyusun fungsi untuk merekomendasikan game berdasarkan input judul.
+---
 
+## 🧠 Modeling and Result
 
 ### Top-N Recommendation
+Top-N Recommendation adalah pendekatan yang berfokus pada mengidentifikasi N item teratas yang paling relevan untuk direkomendasikan kepada pengguna, bukan pada memprediksi rating secara akurat.
+
+**Cara Kerja:**
+- Menghitung skor relevansi untuk setiap game berdasarkan preferensi pengguna
+- Mengurutkan game berdasarkan skor relevansi
+- Memilih N game teratas untuk direkomendasikan
 - Menyusun daftar Top-N game dengan skor similarity rata-rata tertinggi.
 - Menyediakan hasil rekomendasi awal tanpa masukan spesifik dari pengguna.
 
