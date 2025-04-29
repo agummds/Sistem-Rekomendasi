@@ -55,7 +55,6 @@ Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missin
 
 - `user_review_score`: Beberapa game mungkin tidak memiliki nilai ini jika belum mendapatkan cukup ulasan dari pengguna
 - `metacritic_review_score`: Game yang baru dirilis atau kurang populer mungkin belum memiliki skor dari kritikus profesional
-- `genres`: Beberapa ga
 
 
 ### Exploratory Data Analysis (EDA)
