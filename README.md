@@ -46,7 +46,7 @@ Dataset terdiri dari 13.390 entri dan 12 kolom yang mencakup informasi game sepe
 | esrb                      | Rating ESRB (untuk batasan usia)              |
 | must_play                 | Label apakah game "wajib dimainkan" (0/1)     |
 
-Link sumber data: [Kaggle - Video Game Dataset]([https://www.kaggle.com/datasets/sidtwr/videogame-dataset-metacritic](https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024)
+Link sumber data: [Kaggle - Video Game Dataset](https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024)
 
 #### Kondisi Data
 
