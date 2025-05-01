@@ -46,16 +46,16 @@ Dataset terdiri dari 13.390 entri dan 12 kolom yang mencakup informasi game sepe
 | esrb                      | Rating ESRB (untuk batasan usia)              |
 | must_play                 | Label apakah game "wajib dimainkan" (0/1)     |
 
-Link sumber data: [Kaggle - Video Game Dataset](https://www.kaggle.com/datasets/sidtwr/videogame-dataset-metacritic)
+Link sumber data: [Kaggle - Video Game Dataset]([https://www.kaggle.com/datasets/sidtwr/videogame-dataset-metacritic](https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024))
 
 #### Kondisi Data
 
 #### Missing Values
+Terdapat sebanyak 3686 data yang hilang, karena ada data metacritic_review_score & user_review_score yang ikut hilang maka perlu urus untuk data yang hilang itu dengan beberapa penanganan
 Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missing values), terutama pada kolom-kolom seperti:
 
 - `user_review_score`: Beberapa game mungkin tidak memiliki nilai ini jika belum mendapatkan cukup ulasan dari pengguna
 - `metacritic_review_score`: Game yang baru dirilis atau kurang populer mungkin belum memiliki skor dari kritikus profesional
-- `genres`: Beberapa ga
 
 
 ### Exploratory Data Analysis (EDA)
@@ -112,20 +112,37 @@ Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missin
 
 ## 🧹 Data Preparation
 
-Beberapa langkah yang dilakukan:
+### Penanganan missing value
+Karena ada beberapa bagian dari data yang mengalami missjng value maka dilakukan penanganan missjng value seperti pada umumnya. Metode yang digunakan adalah **imputasi** pada metacritic dan review count dan mengisinya dengan nilai 0.
+
+Terdapat sebanyak 3686 data yang hilang, karena ada data metacritic_review_score & user_review_score yang ikut hilang maka perlu urus untuk data yang hilang itu dengan beberapa penanganan
+Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missing values), terutama pada kolom-kolom seperti:
+
+- `user_review_score`: Beberapa game mungkin tidak memiliki nilai ini jika belum mendapatkan cukup ulasan dari pengguna
+- `metacritic_review_score`: Game yang baru dirilis atau kurang populer mungkin belum memiliki skor dari kritikus profesional
+
+### Penerapan Featuring Engineering:
+
+Mengubah data mentah menjadi fitur (fitur = representasi numerik/struktur) yang lebih baik untuk model machine learning. TF-IDF mengambil teks mentah dan mengubahnya menjadi representasi numerik berdasarkan pentingnya kata dalam dokumen dibandingkan dengan seluruh korpus — artinya, dia menciptakan fitur dari data teks.
+
 - Menggunakan TF-IDF Vectorizer untuk mengonversi data teks (genre, platform, dll) menjadi representasi numerik.
 - Menormalisasi beberapa kolom numerik 
 
-Alasan dilakukan preprocessing:
 - TF-IDF dipilih karena mampu menangkap bobot penting kata pada fitur genre/platform.
 
-### Pendekatan 1: Content-Based Filtering
+### Membuat Pendekatan  Content-Based Filtering
+
 - Menggunakan TF-IDF untuk genre, platform, dan skor review.
 - Menghitung cosine similarity antar game.
 - Menyusun fungsi untuk merekomendasikan game berdasarkan input judul.
 ---
 
 ## 🧠 Modeling and Result
+
+- ## Cosine Similarity  
+  Digunakan untuk mengukur tingkat kemiripan antara game berdasarkan representasi vektor dari fitur-fitur seperti `genres`, `platforms`, dan `scores`.
+  - Nilai cosine similarity berkisar dari **0** (tidak mirip) hingga **1** (identik).
+  - Cocok digunakan pada sistem rekomendasi berbasis Content-Based Filtering (CBF) karena fokus pada kemiripan antar item berdasarkan atribut.
 
 ### Top-N Recommendation
 Top-N Recommendation adalah pendekatan yang berfokus pada mengidentifikasi N item teratas yang paling relevan untuk direkomendasikan kepada pengguna, bukan pada memprediksi rating secara akurat.
@@ -190,11 +207,6 @@ Berikut adalah beberapa insight yang diperoleh dari hasil Top-10 rekomendasi yan
 
 ## Metrik Evaluasi
 
-- **Cosine Similarity**  
-  Digunakan untuk mengukur tingkat kemiripan antara game berdasarkan representasi vektor dari fitur-fitur seperti `genres`, `platforms`, dan `scores`.
-  - Nilai cosine similarity berkisar dari **0** (tidak mirip) hingga **1** (identik).
-  - Cocok digunakan pada sistem rekomendasi berbasis Content-Based Filtering (CBF) karena fokus pada kemiripan antar item berdasarkan atribut.
-
 - **Precision@N**  
   Digunakan untuk mengevaluasi relevansi hasil rekomendasi.
   - Precision dihitung berdasarkan proporsi game yang benar-benar relevan dibandingkan seluruh rekomendasi yang diberikan.
@@ -205,31 +217,29 @@ $$
 \text{Precision@N} = \frac{\text{Jumlah fitur relevan pada rekomendasi}}{N}
 $$
 
+Pada proses - **Precision@N** , digunakan kode seperti perikut
+```
+def precision_at_k(recommended_items, actual_items, k):
+    top_k_recommendations = recommended_items[:k]
+    num_relevant_in_top_k = len(set(top_k_recommendations) & set(actual_items))
+    return num_relevant_in_top_k / k if k > 0 else 0
 
+# Contoh data user
+recommended_items = ['GTA V', 'FIFA 23', 'Minecraft']
+actual_items = ['Minecraft', 'Fortnite', 'FIFA 23']
+
+# Hitung Precision@3
+k = 3
+precision_score = precision_at_k(recommended_items, actual_items, k)
+
+# Tampilkan output
+print(f"Precision@{k}: {precision_score:.4f}")
+
+
+```
+Nilai Precision@3 sebesar 0,6667 berarti bahwa, rata-rata, sekitar 67% dari tiga item rekomendasi teratas yang diberikan sistem memang relevan dengan preferensi atau kebutuhan pengguna. Dengan kata lain, dari setiap 3 rekomendasi yang muncul, 2 di antaranya biasanya sesuai (relevan), sementara 1 sisanya tidak relevan.
 ---
 
-## 📈 Hasil Evaluasi
-
-| Skema Sistem Rekomendasi | Precision@10 | Rata-rata Cosine Similarity |
-|:--------------------------|:-------------|:----------------------------|
-| Genres + Platforms         | 0.9           | 0.250                       |
-| Genres Only                | 0.7           | 0.220                       |
-| Platforms Only             | 0.6           | 0.215                       |
-
-### Interpretasi:
-- Skema dengan kombinasi **Genres + Platforms** memberikan precision tertinggi (**90%**) dan juga memiliki rata-rata similarity yang lebih tinggi dibandingkan skema lain.
-- Ini menunjukkan bahwa mempertimbangkan kedua fitur sekaligus menghasilkan rekomendasi yang lebih relevan dan mirip dengan preferensi pengguna.
-
----
-
-## 📊 Komparasi dan Model Terbaik
-
-- **Genres + Platforms** terbukti sebagai skema terbaik karena:
-  - Precision@10 mencapai 0.9.
-  - Rata-rata Cosine Similarity juga tertinggi di antara semua skema.
-- Skema ini berhasil menemukan keseimbangan antara kemiripan fitur dan relevansi hasil rekomendasi.
-
----
 
 ## 🔗 Hubungan dengan Business Understanding
 

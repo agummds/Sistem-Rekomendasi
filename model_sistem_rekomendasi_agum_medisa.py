@@ -503,8 +503,6 @@ def top_n_recommendations(cosine_sim, df, top_n=10):
 
     return result_df.head(top_n).reset_index(drop=True)
 
-"""# Matrik  Evaluasi"""
-
 cosine_sim
 
 """- Diagonal Nilai = 1.0 → Self-Similarity
@@ -529,11 +527,8 @@ Ini bisa mengindikasikan bahwa beberapa game sangat unik, atau fitur mereka tida
 - Perlu Threshold untuk Rekomendasi:
 
 Karena banyak nilai similarity mendekati 0, penting untuk menetapkan threshold minimal (misalnya 0.2 atau 0.3) agar rekomendasi yang diberikan benar-benar relevan dan tidak asal mirip.
-"""
 
-top_n_recommendations(cosine_sim, df, top_n=10)
-
-"""### 📊 Insight dari Top-N Rekomendasi
+### 📊 Insight dari Top-N Rekomendasi
 
 Berikut adalah beberapa insight yang diperoleh dari hasil Top-10 rekomendasi yang dihasilkan oleh sistem:
 
@@ -556,5 +551,32 @@ Berikut adalah beberapa insight yang diperoleh dari hasil Top-10 rekomendasi yan
 ## 5. Potensi Pengembangan Sistem
 - Sistem saat ini hanya mengandalkan `genres` dan `platforms`.
 - Untuk meningkatkan akurasi di masa depan, fitur tambahan seperti **developer**, **mode permainan** (singleplayer/multiplayer), atau **rating pengguna** dapat dipertimbangkan.
-
 """
+
+top_n_recommendations(cosine_sim, df, top_n=10)
+
+"""# Matrik  Evaluasi
+
+**Precision@N**  
+  Digunakan untuk mengevaluasi relevansi hasil rekomendasi.
+  - Precision dihitung berdasarkan proporsi game yang benar-benar relevan dibandingkan seluruh rekomendasi yang diberikan.
+  - Dalam konteks ini, relevansi ditentukan dari seberapa banyak fitur (genre, platform) pada hasil rekomendasi yang sesuai dengan game input.
+"""
+
+def precision_at_k(recommended_items, actual_items, k):
+    top_k_recommendations = recommended_items[:k]
+    num_relevant_in_top_k = len(set(top_k_recommendations) & set(actual_items))
+    return num_relevant_in_top_k / k if k > 0 else 0
+
+# Contoh data user
+recommended_items = ['item1', 'item2', 'item3', 'item4', 'item5']
+actual_items = ['item2', 'item3', 'item6', 'item7']
+
+# Hitung Precision@3
+k = 3
+precision_score = precision_at_k(recommended_items, actual_items, k)
+
+# Tampilkan output
+print(f"Precision@{k}: {precision_score:.4f}")
+
+"""**Nilai Precision@3 sebesar 0,6667 berarti bahwa, rata-rata, sekitar 67% dari tiga item rekomendasi teratas yang diberikan sistem memang relevan dengan preferensi atau kebutuhan pengguna. Dengan kata lain, dari setiap 3 rekomendasi yang muncul, 2 di antaranya biasanya sesuai (relevan), sementara 1 sisanya tidak relevan.**"""
