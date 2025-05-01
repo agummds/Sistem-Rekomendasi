@@ -46,7 +46,7 @@ Dataset terdiri dari 13.390 entri dan 12 kolom yang mencakup informasi game sepe
 | esrb                      | Rating ESRB (untuk batasan usia)              |
 | must_play                 | Label apakah game "wajib dimainkan" (0/1)     |
 
-Link sumber data: [Kaggle - Video Game Dataset]([https://www.kaggle.com/datasets/sidtwr/videogame-dataset-metacritic](https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024))
+Link sumber data: [Kaggle - Video Game Dataset]([https://www.kaggle.com/datasets/sidtwr/videogame-dataset-metacritic](https://www.kaggle.com/datasets/uuratl/metacritic-games-12-23-2024)
 
 #### Kondisi Data
 
@@ -115,14 +115,11 @@ Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missin
 ### Penanganan missing value
 Karena ada beberapa bagian dari data yang mengalami missjng value maka dilakukan penanganan missjng value seperti pada umumnya. Metode yang digunakan adalah **imputasi** pada metacritic dan review count dan mengisinya dengan nilai 0.
 
-<<<<<<< HEAD
 Terdapat sebanyak 3686 data yang hilang, karena ada data metacritic_review_score & user_review_score yang ikut hilang maka perlu urus untuk data yang hilang itu dengan beberapa penanganan
 Dataset Metacritic Games kemungkinan memiliki beberapa nilai yang hilang (missing values), terutama pada kolom-kolom seperti:
 
 - `user_review_score`: Beberapa game mungkin tidak memiliki nilai ini jika belum mendapatkan cukup ulasan dari pengguna
 - `metacritic_review_score`: Game yang baru dirilis atau kurang populer mungkin belum memiliki skor dari kritikus profesional
-=======
->>>>>>> 4dea48056940074cd25516002c6a767e283df527
 
 ### Penerapan Featuring Engineering:
 
